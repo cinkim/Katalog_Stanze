@@ -11,7 +11,8 @@ def vytvor_top_zmeny(self):
 
         self.c_noze_zmenaL = tk.Label(self.top_zmeny, text="Stanzmesser Nummer", width=20, font="Arial 8")
         self.c_noze_zmenaL.grid(row=0, column=0, sticky=W)
-        self.c_noze_zmenaE = tk.Entry(self.top_zmeny, width=20, justify="center")
+        self.nuz_zmena = StringVar()
+        self.c_noze_zmenaE = tk.Entry(self.top_zmeny, width=20, justify="center", textvariable=self.nuz_zmena)
         self.c_noze_zmenaE.grid(row=1, column=0, sticky=W)
         self.c_noze_zmenaB = tk.Button(self.top_zmeny, text="Suchen Stanze", width=17, command=self.nuz_zmeny)
         self.c_noze_zmenaB.grid(row=2, column=0, sticky=W)
@@ -103,11 +104,13 @@ def vytvor_top_zmeny(self):
         self.button_Konec.grid(row=16, column=0, sticky=W)
 
 def zmeny_v_datech(self):
-        nuz = self.c_noze_zmenaE.get()
+        nuz = self.c_noze_zmenaE.get()      
         if "_" in nuz:
                 pass
         elif "/" in nuz:
                 nuz = nuz.replace("/", "_")
+                self.nuz_zmena.set(nuz)
+                self.c_noze_zmenaE.config(state=DISABLED)
         else:
                 return
 
@@ -140,67 +143,85 @@ def ulozit_zmeny(self):
                 os = self.entry_otevrena_sirka_zmenaE.get()
                 zk = self.entry_zaverna_klapka_zmenaE.get()
                 pzk = self.entry_prodlouzena_zaverna_zmenaE.get()
-                sp = self.entry_spodni_klapka_zmenaE.get()
+                sk = self.entry_spodni_klapka_zmenaE.get()
                 psk = self.entry_prodlouzena_spodni_zmenaE.get()
                 bl = self.entry_bocni_leva_zmenaE.get()
                 bp = self.entry_bocni_prava_zmenaE.get()
                 poz = self.entry_poznamky_zmenaE.get()
-                prekryti = float(sk) + float(zk) - float(kv)
-                lepidlo_bocni_klapka_venku_1 = float(bl) - 6 + 2
-                lepidlo_bocni_klapka_venku_2 = float(sk) - 5
-                lepidlo_bocni_venku_X = (((float(ks) / 2)+(float(bl) / 2 + 6)) * -1)
-                lepidlo_bocni_venku_Y = float(kv) - float(kv)
-                lepidlo_spodni_klapka_venku_1 = float(ks) - float(bl) - float(bp)
-                lepidlo_spodni_klapka_venku_2 = float(prekryti) - 5 + 3.5 
-                lepidlo_spodni_klapka_venku_X = float(kv) - float(kv)
-                lepidlo_spodni_klapka_venku_Y = float(sk) + 2
-                lepidlo_bocni_klapka_uvnitr_1 = float(bl)
-                lepidlo_bocni_klapka_uvnitr_2 = float(lepidlo_bocni_klapka_venku_2) - 5
-                lepidlo_bocni_klapka_uvnitr_X = (float(ks) / 2 + 2)-(float(lepidlo_bocni_klapka_uvnitr_1) / 2)
-                lepidlo_bocni_klapka_uvnitr_Y = float(lepidlo_bocni_klapka_uvnitr_2) + 5
-                lepidlo_zaverna_klapka_uvnitr_1 = float(prekryti) + 2
-                lepidlo_zaverna_klapka_uvnitr_2 = float(ks) - float(bl) - float(bp)
-                lepidlo_zaverna_klapka_uvnitr_X = float(ks) - float(ks)
-                lepidlo_zaverna_klapka_uvnitr_Y = (float(kv) + float(zk) - float(lepidlo_zaverna_klapka_uvnitr_1) + 2) * -1
-                bocni_vysekovka_1 = float(ks) / 2 + float(bl)
-                bocni_vysekovka_2 = (float(sk) - 15) * -1
-                podni_vysekovka_1 = float(ks) / 2 - 27
-                spodni_vysekovka_2 = float(sk)
-                simulace = 2 - float(ov) + float(prekryti)
+                prekryti = str(float(sk) + float(zk) - float(kv))
+                lepidlo_bocni_klapka_venku_1 = str(float(bl) - 6 + 2)
+                lepidlo_bocni_klapka_venku_2 = str(float(sk) - 5)
+                lepidlo_bocni_venku_X = str((((float(ks) / 2)+(float(bl) / 2 + 6)) * -1))
+                lepidlo_bocni_venku_Y = str(float(kv) - float(kv))
+                lepidlo_spodni_klapka_venku_1 = str(float(ks) - float(bl) - float(bp))
+                lepidlo_spodni_klapka_venku_2 = str(float(prekryti) - 5 + 3.5)
+                lepidlo_spodni_klapka_venku_X = str(float(kv) - float(kv))
+                lepidlo_spodni_klapka_venku_Y = str(float(sk) + 2)
+                lepidlo_bocni_klapka_uvnitr_1 = str(float(bl))
+                lepidlo_bocni_klapka_uvnitr_2 = str(float(lepidlo_bocni_klapka_venku_2) - 5)
+                lepidlo_bocni_klapka_uvnitr_X = str((float(ks) / 2 + 2)-(float(lepidlo_bocni_klapka_uvnitr_1) / 2))
+                lepidlo_bocni_klapka_uvnitr_Y = str(float(lepidlo_bocni_klapka_uvnitr_2) + 5)
+                lepidlo_zaverna_klapka_uvnitr_1 = str(float(prekryti) + 2)
+                lepidlo_zaverna_klapka_uvnitr_2 = str(float(ks) - float(bl) - float(bp))
+                lepidlo_zaverna_klapka_uvnitr_X = str(float(ks) - float(ks))
+                lepidlo_zaverna_klapka_uvnitr_Y = str((float(kv) + float(zk) - float(lepidlo_zaverna_klapka_uvnitr_1) + 2) * -1)
+                bocni_vysekovka_1 = str(float(ks) / 2 + float(bl))
+                bocni_vysekovka_2 = str((float(sk) - 15) * -1)
+                podni_vysekovka_1 = str(float(ks) / 2 - 27)
+                spodni_vysekovka_2 = str(float(sk))
+                simulace = str(2 - float(ov) + float(prekryti))
         except ValueError:
                 tk.messagebox.showwarning("ERROR", "falsche Eingabe\nchyba zadání")
                 return
         else:
-                pozmene = nuz+";"+kv+";"+ks+";"+ov+";"+os+";"+zk+";"+pzk+";"+sk+";"
-                +psk+";"+bl+";"+bp+";"+poz+";"+str(prekryti)+";"+str(lepidlo_bocni_klapka_venku_1)+";"
-                +str(lepidlo_bocni_klapka_venku_2)+";"+str(lepidlo_bocni_venku_X)+";"+str(lepidlo_bocni_venku_Y)+";"
-                +str(lepidlo_spodni_klapka_venku_1)+";"+str(lepidlo_spodni_klapka_venku_2)+";"+str(lepidlo_spodni_klapka_venku_X)+";"
-                +str(lepidlo_spodni_klapka_venku_Y)+";"+str(lepidlo_bocni_klapka_uvnitr_1)+";"+str(lepidlo_bocni_klapka_uvnitr_2)+";"
-                +str(lepidlo_bocni_klapka_uvnitr_X)+";"+str(lepidlo_bocni_klapka_uvnitr_Y)+";"+str(lepidlo_zaverna_klapka_uvnitr_1)+";"
-                +str(lepidlo_zaverna_klapka_uvnitr_2)+";"+str(lepidlo_zaverna_klapka_uvnitr_X)+";"+str(lepidlo_zaverna_klapka_uvnitr_Y)+";"
-                +str(bocni_vysekovka_1)+";"+str(bocni_vysekovka_2)+";"+str(podni_vysekovka_1)+";"+str(spodni_vysekovka_2)+str(simulace)+";"
-                +"ANO"
-                print(pozmene)
-                        
-        """
-        self.nuz.set("")
-        self.kv.set("")
-        self.ks.set("")
-        self.ov.set("")
-        self.os.set("")
-        self.zk.set("")
-        self.pzk.set("")
-        self.sk.set("")
-        self.psk.set("")
-        self.bl.set("")
-        self.bp.set("")
-        self.poz.set("")
-        self.var.set(0)
+                pozmene = (nuz + ";" + kv + ";" + ks + ";" + ov + ";" + os + ";" + zk + ";" + pzk + ";" + sk + ";" +
+                psk + ";" + bl + ";" + bp + ";" + prekryti + ";" + poz + ";" + lepidlo_bocni_klapka_venku_1 + ";" +
+                lepidlo_bocni_klapka_venku_2 + ";" + lepidlo_bocni_venku_X + ";" + lepidlo_bocni_venku_Y + ";" +
+                lepidlo_spodni_klapka_venku_1 + ";" + lepidlo_spodni_klapka_venku_2 + ";" + lepidlo_spodni_klapka_venku_X + ";" +
+                lepidlo_spodni_klapka_venku_Y + ";" + lepidlo_bocni_klapka_uvnitr_1 + ";" + lepidlo_bocni_klapka_uvnitr_2 + ";" +
+                lepidlo_bocni_klapka_uvnitr_X + ";" + lepidlo_bocni_klapka_uvnitr_Y + ";" + lepidlo_zaverna_klapka_uvnitr_1 + ";" +
+                lepidlo_zaverna_klapka_uvnitr_2 + ";" + lepidlo_zaverna_klapka_uvnitr_X + ";" + lepidlo_zaverna_klapka_uvnitr_Y + ";" +
+                bocni_vysekovka_1 + ";" + bocni_vysekovka_2 + ";" + podni_vysekovka_1 + ";" + spodni_vysekovka_2 + ";" + simulace + ";" + "ANO")
 
-        tk.messagebox.showwarning("Hotovo", "Změna uložena.")
-        """
+                novy_seznam = []
+                with open("D:/Python/Projekty_Python/Katalog_nozu/seznam_nozu_test.csv", mode="r", encoding="utf-8") as novy:
+                        novy = csv.reader(novy, delimiter=";")
+                        for radka in novy:
+                                if radka[0] != nuz:
+                                        novy_seznam.append(radka)
+                                else:
+                                        novy_seznam.append(pozmene.split(";"))
 
 
+                with open("D:/Python/Projekty_Python/Katalog_nozu/seznam_nozu_test.csv", mode="w", encoding="utf-8") as zapis:
+                        for rad in novy_seznam:
+                                sss = ""
+                                pocet = len(rad)
+                                pocet_cyklu = 0
+                                for neco in rad:
+                                        neco.replace('"', "")
+                                        pocet_cyklu+=1
+                                        if pocet_cyklu == 35:
+                                                sss = sss + neco
+                                        else:
+                                                sss = sss + neco + ";"
+                                print(sss, file=zapis)
+  
+                
+                self.c_noze_zmenaE.config(state=NORMAL)
+                self.nuz_zmena.set("")
+                self.kv_zmena.set("")
+                self.ks_zmena.set("")
+                self.ov_zmena.set("")
+                self.os_zmena.set("")
+                self.zk_zmena.set("")
+                self.pzk_zmena.set("")
+                self.sk_zmena.set("")
+                self.psk_zmena.set("")
+                self.bl_zmena.set("")
+                self.bp_zmena.set("")
+                self.poz_zmena.set("")
 
+                tk.messagebox.showwarning("Hotovo", "Změna uložena.")
+                return
 
-                                
