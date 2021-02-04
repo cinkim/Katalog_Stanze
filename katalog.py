@@ -101,7 +101,7 @@ def vytvor_top_katalog_nozu(self):
         self.tree_zaznamy.heading("12", text="Überdeckung\n\n")
         self.tree_zaznamy.column("12", minwidth=0, width=80, anchor='center')
 
-        self.tree_zaznamy.heading("13", text="Akviv\n\n")
+        self.tree_zaznamy.heading("13", text="Aktiv\n\n")
         self.tree_zaznamy.column("13", minwidth=0, width=50, anchor='center')
 
         self.tree_zaznamy.heading("14", text="Bemerkungen\n\n")
