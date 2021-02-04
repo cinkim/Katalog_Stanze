@@ -2,7 +2,11 @@ import tkinter as tk
 from tkinter import ttk, StringVar, NORMAL, CENTER, N, S, E, W
 from tkinter import LEFT, NO, DISABLED, NORMAL
 import tkinter.messagebox
+from tkinter import messagebox
+
 import csv
+
+
 
 def vytvor_top_zmeny(self):
         self.top_zmeny = tk.Toplevel()
@@ -20,6 +24,10 @@ def vytvor_top_zmeny(self):
         self.ulozit_zmenu.grid(row=3, column=0, sticky=W)
         self.mez1 = tk.Label(self.top_zmeny, text="", width=20, font="Arial 8")
         self.mez1.grid(row=4, column=0, sticky=W)
+
+        self.smazat = tk.Button(self.top_zmeny, text="Smazat", width=17, command=self.smazat, fg="red")
+        self.smazat.grid(row=2, column=1, sticky=W)
+
 
         
         self.konecna_vyska_zmenaL = tk.Label(self.top_zmeny, text="Konečná výška/End Format Höhe", width=40, font="Arial 14", anchor=E)
@@ -99,11 +107,18 @@ def vytvor_top_zmeny(self):
         self.entry_poznamky_zmenaE.config(state=NORMAL)
         self.entry_poznamky_zmenaE.grid(row=15, column=1)
 
+        self.aktivni_zmena = tk.Label(self.top_zmeny, text="Aktivní", width=40, font="Arial 14", anchor=E)
+        self.aktivni_zmena.grid(row=16, column=0, sticky=W)
+        self.aktiv_zmena = StringVar()
+        self.entry_Aktiv = ttk.Entry(self.top_zmeny, width=70, textvariable=self.aktiv_zmena)
+        self.entry_Aktiv.config(state=NORMAL)
+        self.entry_Aktiv.grid(row=16, column=1)
+
 
         self.button_Konec = tk.Button(self.top_zmeny, text="Konec", width=17, command=self.top_zmeny.destroy, fg="red")
-        self.button_Konec.grid(row=16, column=0, sticky=W)
+        self.button_Konec.grid(row=17, column=0, sticky=W)
 
-def zmeny_v_datech(self):
+def zmeny_v_datech(self, cesta_souboru):
         nuz = self.c_noze_zmenaE.get()      
         if "_" in nuz:
                 pass
@@ -114,7 +129,7 @@ def zmeny_v_datech(self):
         else:
                 return
 
-        with open("D:/Python/Projekty_Python/Katalog_nozu/seznam_nozu_test.csv", mode="r", encoding="utf-8") as noze:
+        with open(cesta_souboru, mode="r", encoding="utf-8") as noze:
                 noze = csv.reader(noze, delimiter=";")
                 for radka in noze:
                         if radka[0] != nuz:
@@ -131,10 +146,11 @@ def zmeny_v_datech(self):
                                 self.bl_zmena.set(radka[9])
                                 self.bp_zmena.set(radka[10])
                                 self.poz_zmena.set(radka[12])
+                                self.aktiv_zmena.set(radka[34])
                                 return
 
 
-def ulozit_zmeny(self):
+def ulozit_zmeny(self, cesta_souboru):
         try:
                 nuz = self.c_noze_zmenaE.get()
                 kv = self.entry_konecna_vyska_zmenaE.get()
@@ -148,6 +164,7 @@ def ulozit_zmeny(self):
                 bl = self.entry_bocni_leva_zmenaE.get()
                 bp = self.entry_bocni_prava_zmenaE.get()
                 poz = self.entry_poznamky_zmenaE.get()
+                akt = self.entry_Aktiv.get()
                 prekryti = str(float(sk) + float(zk) - float(kv))
                 lepidlo_bocni_klapka_venku_1 = str(float(bl) - 6 + 2)
                 lepidlo_bocni_klapka_venku_2 = str(float(sk) - 5)
@@ -181,10 +198,10 @@ def ulozit_zmeny(self):
                 lepidlo_spodni_klapka_venku_Y + ";" + lepidlo_bocni_klapka_uvnitr_1 + ";" + lepidlo_bocni_klapka_uvnitr_2 + ";" +
                 lepidlo_bocni_klapka_uvnitr_X + ";" + lepidlo_bocni_klapka_uvnitr_Y + ";" + lepidlo_zaverna_klapka_uvnitr_1 + ";" +
                 lepidlo_zaverna_klapka_uvnitr_2 + ";" + lepidlo_zaverna_klapka_uvnitr_X + ";" + lepidlo_zaverna_klapka_uvnitr_Y + ";" +
-                bocni_vysekovka_1 + ";" + bocni_vysekovka_2 + ";" + podni_vysekovka_1 + ";" + spodni_vysekovka_2 + ";" + simulace + ";" + "ANO")
+                bocni_vysekovka_1 + ";" + bocni_vysekovka_2 + ";" + podni_vysekovka_1 + ";" + spodni_vysekovka_2 + ";" + simulace + ";" + akt)
 
                 novy_seznam = []
-                with open("D:/Python/Projekty_Python/Katalog_nozu/seznam_nozu_test.csv", mode="r", encoding="utf-8") as novy:
+                with open(cesta_souboru, mode="r", encoding="utf-8") as novy:
                         novy = csv.reader(novy, delimiter=";")
                         for radka in novy:
                                 if radka[0] != nuz:
@@ -193,7 +210,7 @@ def ulozit_zmeny(self):
                                         novy_seznam.append(pozmene.split(";"))
 
 
-                with open("D:/Python/Projekty_Python/Katalog_nozu/seznam_nozu_test.csv", mode="w", encoding="utf-8") as zapis:
+                with open(cesta_souboru, mode="w", encoding="utf-8") as zapis:
                         for rad in novy_seznam:
                                 sss = ""
                                 pocet = len(rad)
@@ -221,7 +238,54 @@ def ulozit_zmeny(self):
                 self.bl_zmena.set("")
                 self.bp_zmena.set("")
                 self.poz_zmena.set("")
+                self.aktiv_zmena.set("")
 
                 tk.messagebox.showwarning("Hotovo", "Změna uložena.")
                 return
 
+
+def smazat_zaznam(self, cesta_souboru):
+        nuz = self.c_noze_zmenaE.get()
+        if nuz == "":
+                tk.messagebox.showwarning("???", "Zadej číslo nože.")
+                return
+
+        if messagebox.askyesno("Smazat", "Smazat záznam") == True:
+                if "_" in nuz:
+                        pass
+                elif "/" in nuz:
+                        nuz = nuz.replace("/", "_")
+
+                novy_seznam2 = []
+                with open(cesta_souboru, mode="r", encoding="utf-8") as novy2:
+                        novy2 = csv.reader(novy2, delimiter=";")
+                        mame = ""
+                        for radka in novy2:
+                                if radka[0] != nuz:
+                                        novy_seznam2.append(radka)
+                                else:
+                                        mame = "ano"
+
+                if mame == "":
+                        tk.messagebox.showwarning("????", "Nůž nenalezen.")
+                        return
+                        
+                with open(cesta_souboru, mode="w", encoding="utf-8") as zapis2:
+                        for rad2 in novy_seznam2:
+                                sss = ""
+                                pocet = len(rad2)
+                                pocet_cyklu = 0
+                                for neco in rad2:
+                                        neco.replace('"', "")
+                                        pocet_cyklu+=1
+                                        if pocet_cyklu == 35:
+                                                sss = sss + neco
+                                        else:
+                                                sss = sss + neco + ";"
+                                print(sss, file=zapis2)
+                        self.nuz_zmena.set("")
+                        tk.messagebox.showwarning("Hotovo", "Záznam smazán.")
+        else:
+            pass
+
+       
