@@ -16,7 +16,7 @@ from novy_zaznam import vytvor_top_novy_zaznam
 from katalog import vytvor_top_katalog_nozu
 from prepress import vytvor_top_souradnic_prepress
 from brusici import vytvot_top_brusici
-from zmeny import vytvor_top_zmeny, zmeny_v_datech, ulozit_zmeny
+from zmeny import smazat_zaznam, vytvor_top_zmeny, zmeny_v_datech, ulozit_zmeny
 
 class stanzmesserliste:
 
@@ -474,13 +474,16 @@ class stanzmesserlisteGUI(tk.Frame):
                 return
 
     def nuz_zmeny(self):
-        zmeny_v_datech(self)
+        zmeny_v_datech(self, self.stanzmesserliste.cesta_souboru)
 
     def uloz_zmeny(self):
-        ulozit_zmeny(self)
+        ulozit_zmeny(self, self.stanzmesserliste.cesta_souboru)
      
     def on_close(self):
        self.parent.destroy()
+
+    def smazat(self):
+        smazat_zaznam(self, self.stanzmesserliste.cesta_souboru)
 
 
     
