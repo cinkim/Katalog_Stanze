@@ -283,8 +283,22 @@ def smazat_zaznam(self, cesta_souboru):
                                         else:
                                                 sss = sss + neco + ";"
                                 print(sss, file=zapis2)
-                        self.nuz_zmena.set("")
-                        tk.messagebox.showwarning("Hotovo", "Záznam smazán.")
+                self.nuz_zmena.set("")
+                self.kv_zmena.set("")
+                self.ks_zmena.set("")
+                self.ov_zmena.set("")
+                self.os_zmena.set("")
+                self.zk_zmena.set("")
+                self.pzk_zmena.set("")
+                self.sk_zmena.set("")
+                self.psk_zmena.set("")
+                self.bl_zmena.set("")
+                self.bp_zmena.set("")
+                self.poz_zmena.set("")
+                self.aktiv_zmena.set("")
+                self.c_noze_zmenaE.config(state=NORMAL)
+                tk.messagebox.showwarning("Hotovo", "Záznam smazán.")
+                
         else:
             pass
 
