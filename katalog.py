@@ -2,9 +2,11 @@ import tkinter as tk
 from tkinter import ttk, StringVar, NORMAL, CENTER, N, S, E, W
 from tkinter import LEFT, NO, DISABLED, NORMAL
 import tkinter.messagebox
+from tkinter import messagebox
 import win32com.client as win32
+
 import os
-import win32com.client as win32
+
 import pandas as pd
 import numpy as np
 
@@ -135,7 +137,7 @@ def PDF_nahled(self, cesta_pro_PDF, nalezeno):
                 os.startfile(pdf)
                 return
 
-def odeslat(self, cesta_pro_PDF, nalezeno):
+def odeslat(self, cesta_pro_PDF, nalezeno, pozice_k_odeslani):
         """
         Odešle PDF emailem
         data načítá z proměnné NALEZENO
@@ -145,19 +147,28 @@ def odeslat(self, cesta_pro_PDF, nalezeno):
                 pozice = self.tree_zaznamy.item(pozice)
                 pozice = pozice["text"]
                 pozice = int(pozice)
-                outlook = win32.Dispatch("outlook.application")
-                mail = outlook.CreateItem(0)
-                mail.subject = "Stanzmesser"
-                projite_pozice = 0
-                for cislo_zaznamu in nalezeno:
-                        if projite_pozice != pozice:
-                                projite_pozice +=1
+                prosle = 0
+                for qq in nalezeno:
+                        if prosle == pozice:
+                                self.stanzmesserliste.pozice_k_odeslani.append(qq[0])
+                                break
                         else:
-                                pdf = cislo_zaznamu[0] + ".pdf"
-                                pdf = cesta_pro_PDF + pdf
-                                mail.Attachments.Add(pdf)
-                                mail.Display(False)
+                                prosle +=1
+
+                while True:
+                        if messagebox.askyesno("???", "Vybrat další:") == True:
                                 return
+                        else:
+                                outlook = win32.Dispatch("outlook.application")
+                                mail = outlook.CreateItem(0)
+                                mail.subject = "Stanzmesser"
+                                for zaznam in pozice_k_odeslani:
+                                        pdf = zaznam + ".pdf"
+                                        pdf = cesta_pro_PDF + pdf
+                                        mail.Attachments.Add(pdf)
+                                        mail.Display(False)
+                                return
+
 
 
 def najdi(self, cesta_souboru):
