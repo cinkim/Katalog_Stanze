@@ -1,13 +1,14 @@
-import csv
+# import csv
 
 import tkinter as tk
 from tkinter import ttk, StringVar, NORMAL, CENTER, N, S, E, W
 from tkinter import LEFT, NO, DISABLED, NORMAL
 import tkinter.messagebox
 import os
+import sys
 
-import pandas as pd 
-import numpy as np
+# import pandas as pd 
+# import numpy as np
 
 import novy_zaznam as nz
 import katalog as kat
@@ -15,16 +16,18 @@ import prepress as pr
 import brusici as br
 import zmeny as zm
 
+
 class stanzmesserliste:
 
     def __init__(self):
-        self.cesta_souboru = "D:/Python/Projekty_Python/Katalog_nozu/seznam_nozu_test.csv"
-        self.cesta_prava = "D:/Python/Projekty_Python/Katalog_nozu/uzivatele.taj"
+        self.cesta_souboru = "seznam_nozu_test.csv"
+        self.cesta_prava = "uzivatele.taj"
         self.uzivatele_admin = []
         self.pravda = None
         self.pro_zobrazeni = []
-        self.cesta_pro_PDF = "D:/Python/Projekty_Python/Katalog_nozu/PDFStanzen/"
-        self.cesta_sestavy_Brusici = "D:/Python/Projekty_Python/Katalog_nozu/brusici.csv"
+        self.pozice_k_odeslani = []
+        self.cesta_pro_PDF = "U:/AV_Beku/Projekty/Stanzmesserliste/PDFStanzen/"
+        self.cesta_sestavy_Brusici = "brusici.csv"
         self.nalezeno = []
         self.overeni(self.cesta_prava)
         self.odemceno = stanzmesserliste.odemknout(self)
@@ -98,7 +101,7 @@ class stanzmesserlisteGUI(tk.Frame):
         kat.vytvor_top_katalog_nozu(self)
 
     def per_email(self):
-        kat.odeslat(self, self.stanzmesserliste.cesta_pro_PDF, self.stanzmesserliste.nalezeno)
+        kat.odeslat(self, self.stanzmesserliste.cesta_pro_PDF, self.stanzmesserliste.nalezeno, self.stanzmesserliste.pozice_k_odeslani)
 
     def otevri_PDF(self):
        kat.PDF_nahled(self, self.stanzmesserliste.cesta_pro_PDF, self.stanzmesserliste.nalezeno)
