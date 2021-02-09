@@ -3,6 +3,10 @@ from tkinter import ttk, StringVar, NORMAL, CENTER, N, S, E, W
 from tkinter import LEFT, NO, DISABLED, NORMAL
 import tkinter.messagebox
 import win32com.client as win32
+import os
+import win32com.client as win32
+import pandas as pd
+import numpy as np
 
 def vytvor_top_katalog_nozu(self):
         self.top_katalog = tk.Toplevel()
@@ -109,4 +113,288 @@ def vytvor_top_katalog_nozu(self):
         
         self.button_Konec = tk.Button(self.top_katalog, text="Konec", width=20, command=self.top_katalog.destroy, fg="red")
         self.button_Konec.grid(row=10, column=0, sticky=W)
+
+
+def PDF_nahled(self, cesta_pro_PDF, nalezeno):
+        """
+        Otevře pdf v prohlížeči
+        data načítá z proměnné NALEZENO
+        """
+        if self.tree_zaznamy.focus():
+            pozice = self.tree_zaznamy.focus()
+            pozice = self.tree_zaznamy.item(pozice)
+            pozice = pozice["text"]
+            pozice = int(pozice)
+        projite_pozice = 0
+        for cislo_zaznamu in nalezeno:
+            if projite_pozice != pozice:
+                projite_pozice +=1
+            else:
+                pdf = cislo_zaznamu[0] + ".pdf"
+                pdf = cesta_pro_PDF + pdf
+                os.startfile(pdf)
+                return
+
+def odeslat(self, cesta_pro_PDF, nalezeno):
+        """
+        Odešle PDF emailem
+        data načítá z proměnné NALEZENO
+        """
+        if self.tree_zaznamy.focus():
+                pozice = self.tree_zaznamy.focus()
+                pozice = self.tree_zaznamy.item(pozice)
+                pozice = pozice["text"]
+                pozice = int(pozice)
+                outlook = win32.Dispatch("outlook.application")
+                mail = outlook.CreateItem(0)
+                mail.subject = "Stanzmesser"
+                projite_pozice = 0
+                for cislo_zaznamu in nalezeno:
+                        if projite_pozice != pozice:
+                                projite_pozice +=1
+                        else:
+                                pdf = cislo_zaznamu[0] + ".pdf"
+                                pdf = cesta_pro_PDF + pdf
+                                mail.Attachments.Add(pdf)
+                                mail.Display(False)
+                                return
+
+
+def najdi(self, cesta_souboru):
+        """
+        Najde nůž podle čísla
+        výstup uloží do proměnné NALEZENO
+        """
+        self.stanzmesserliste.nalezeno = []
+        self.stanzmesserliste.pro_zobrazeni = []
+        try:
+            nuz = self.c_noze_Entry.get()
+            if nuz == "":
+                tk.messagebox.showwarning("ERROR", "falsche Eingabe\nfehlende Messernummer")
+                return
+            elif "/" in nuz:
+                nuz = nuz.replace("/", "_")
+            elif "_" not in nuz:
+                tk.messagebox.showwarning("ERROR", "falsche Eingabe\nfehlender Begrenzer '_'")
+                return
+        except ValueError:
+            tk.messagebox.showwarning("ERROR", "falsche Eingabe")
+            return
+        else:
+            sloupce = ["Stanze", "End_vyska", "End_sirka", "O_vyska",
+                        "O_sirka", "Sch_k", "PSK", "B_K", "PBK", "L", "P", "Prek", "Bem", "LBKV_1", "LBKV_2", "LBV_X", "LBV_Y", "LSKV_1", "LSKV_2",
+                        "LSKV_X", "LSKV_Y", "LBKU_1", "LBKU_2", "LBKU_X", "LBKU_Y", "LZKU_1", "LZKU_2", "LZKU_X", "LZKU_Y", "BV_1", "BV_2",
+                        "SV_1", "SV_2", "SIM", "POU"]
+
+            typy = {"Stanze": np.object, "End_vyska": np.int64, "End_sirka": np.int64, "O_vyska": np.float64,
+                    "O_sirka": np.float64, "Sch_k": np.float64, "PSK": np.float64, "B_K": np.float64, "PBK": np.float64, "L": np.float64, "P": np.float64,
+                    "Prek": np.float64, "Bem": np.object, "LBKV_1": np.float64, "LBKV_2": np.float64, "LBV_X": np.float64, "LBV_Y": np.float64, "LSKV_1": np.float64, "LSKV_2": np.float64,
+                    "LSKV_X": np.float64, "LSKV_Y": np.float64, "LBKU_1": np.float64, "LBKU_2": np.float64, "LBKU_X": np.float64, "LBKU_Y": np.float64,
+                    "LZKU_1": np.float64, "LZKU_2": np.float64, "LZKU_X": np.float64, "LZKU_Y": np.float64, "BV_1": np.float64, "BV_2": np.float64,
+                    "SV_1": np.float64, "SV_2": np.float64, "SIM": np.float64, "POU": np.object}
+
+            data = pd.read_csv(cesta_souboru, names=sloupce, dtype=typy, delimiter=";")
+
+
+            nuz = data[(data["Stanze"] == nuz)]
+            nuz.head()
+
+            nalezeno = nuz.values.tolist()
+            if nalezeno == []:
+                tk.messagebox.showwarning("ERROR", "keine Daten")
+                return
+
+        self.stanzmesserliste.pro_zobrazeni = []
+        seznam = []
+        for nuz in nalezeno:
+            seznam = nuz[0:12]
+            dalsi1 = str(nuz[34:35])
+            dalsi1 = dalsi1.replace("'", "").replace("[", "").replace("]", "")
+            seznam.append(dalsi1)
+            dalsi2 = str(nuz[12:13])
+            if dalsi2 == "[nan]":
+                dalsi2 = ""
+            else:
+                pass
+            dalsi2 = dalsi2.replace("'", "").replace("[", "").replace("]", "")
+            seznam.append(dalsi2)
+            self.stanzmesserliste.pro_zobrazeni.append(seznam)
+        self.stanzmesserliste.nalezeno = self.stanzmesserliste.pro_zobrazeni
+
+
+        for pot in self.tree_zaznamy.get_children():
+            self.tree_zaznamy.delete(pot)
+
+        pozice = 0   
+        for Stanze, End_vyska, End_sirka, O_vyska, sirka, Sch_k, PSK, B_K, PBK, L, P, Prek, Bem, POU in self.stanzmesserliste.pro_zobrazeni:
+            self.tree_zaznamy.insert("", "end", text=pozice, values=(Stanze, End_vyska, End_sirka, O_vyska,
+                sirka, Sch_k, PSK, B_K, PBK, L, P, Prek, Bem, POU))
+            pozice += 1
+            return
+
+def najdi_noze(self, cesta_souboru):
+        """
+        najde nože podle rozměrů
+        výstup uloží do proměnné NALEZENO
+        """
+        self.stanzmesserliste.nalezeno = []
+        self.stanzmesserliste.pro_zobrazeni = []
+        try:
+                vyska1 = self.min_vyska_Entry.get()
+                vyska2 = self.max_vyska_Entry.get()
+                sirka1 = self.min_sirka_Entry.get()
+                sirka2 = self.max_sirka_Entry.get()
+                SK1 = self.min_sk_Entry.get()
+                SK2 = self.max_sk_Entry.get()
+                vyska1 = int(vyska1)
+                sirka1 = int(sirka1)
+        except ValueError:
+                tk.messagebox.showwarning("ERROR", "falsche Eingabe")
+                return
+        else:
+                sloupce = ["Stanze", "End_vyska", "End_sirka", "O_vyska",
+                                "O_sirka", "Sch_k", "PSK", "B_K", "PBK", "L", "P", "Prek", "Bem", "LBKV_1", "LBKV_2", "LBV_X", "LBV_Y", "LSKV_1", "LSKV_2",
+                                "LSKV_X", "LSKV_Y", "LBKU_1", "LBKU_2", "LBKU_X", "LBKU_Y", "LZKU_1", "LZKU_2", "LZKU_X", "LZKU_Y", "BV_1", "BV_2",
+                                "SV_1", "SV_2", "SIM", "POU"]
+
+                typy = {"Stanze": np.object, "End_vyska": np.int64, "End_sirka": np.int64, "O_vyska": np.float64,
+                        "O_sirka": np.float64, "Sch_k": np.float64, "PSK": np.float64, "B_K": np.float64, "PBK": np.float64, "L": np.float64, "P": np.float64,
+                        "Prek": np.float64, "Bem": np.object, "LBKV_1": np.float64, "LBKV_2": np.float64, "LBV_X": np.float64, "LBV_Y": np.float64, "LSKV_1": np.float64, "LSKV_2": np.float64,
+                        "LSKV_X": np.float64, "LSKV_Y": np.float64, "LBKU_1": np.float64, "LBKU_2": np.float64, "LBKU_X": np.float64, "LBKU_Y": np.float64,
+                        "LZKU_1": np.float64, "LZKU_2": np.float64, "LZKU_X": np.float64, "LZKU_Y": np.float64, "BV_1": np.float64, "BV_2": np.float64,
+                        "SV_1": np.float64, "SV_2": np.float64, "SIM": np.float64, "POU": np.object}
+
+                data = pd.read_csv(cesta_souboru, names=sloupce, dtype=typy, delimiter=";")
+
+                if vyska2 == "":
+                        vyska2 = int(vyska1)
+                else:
+                        vyska2 = int(vyska2)
+                        if vyska2 < vyska1:
+                                tk.messagebox.showwarning("ERROR", "falsche Eingabe\nchyba zadání")                   
+                                return
+
+                if sirka2 == "":
+                        sirka2 = int(sirka1)
+                else:
+                        sirka2 = int(sirka2)
+                        if sirka2 < sirka1:
+                                tk.messagebox.showwarning("ERROR", "falsche Eingabe\nchyba zadání")
+                                return
+
+                vyska1 = data[(data["End_vyska"] >= vyska1) & (data["End_vyska"] <= vyska2)]
+                vyska1.head()
+
+                sirka = vyska1[(vyska1["End_sirka"] >= sirka1) & (vyska1["End_sirka"] <= sirka2)]
+                sirka.head()
+
+                if (SK1 == "") and (SK2 == ""):
+                        self.stanzmesserliste.nalezeno = sirka.values.tolist()
+
+                        zobrazit = []
+                        seznam = []
+                        for nuz in self.stanzmesserliste.nalezeno:
+                                seznam = nuz[0:12]
+                                dalsi1 = str(nuz[34:35])
+                                dalsi1 = dalsi1.replace("'", "").replace("[", "").replace("]", "")
+                                seznam.append(dalsi1)
+                                dalsi2 = str(nuz[12:13])
+                                if dalsi2 == "[nan]":
+                                        dalsi2 = ""
+                                else:
+                                        pass
+                                dalsi2 = dalsi2.replace("'", "").replace("[", "").replace("]", "")
+                                seznam.append(dalsi2)
+                                zobrazit.append(seznam)
+
+                        for pot in self.tree_zaznamy.get_children():
+                                self.tree_zaznamy.delete(pot)
+
+                        pozice = 0   
+                        for Stanze, End_vyska, End_sirka, O_vyska, sirka, Sch_k, PSK, B_K, PBK, L, P, Prek, Bem, POU in zobrazit:
+                                self.tree_zaznamy.insert("", "end", text=pozice, values=(Stanze, End_vyska, End_sirka, O_vyska,
+                                        sirka, Sch_k, PSK, B_K, PBK, L, P, Prek, Bem, POU))
+                                pozice += 1
+                        return
+
+                elif (SK1 != "") and (SK2 == ""):
+                        SK1 = int(SK1)
+                        SK2 = SK1
+                        SK = sirka[(sirka["Sch_k"] >= SK1) & (sirka["Sch_k"] <= SK2)]
+                        SK.head()
+                        self.stanzmesserliste.nalezeno = SK.values.tolist()
+
+                        zobrazit = []
+                        seznam = []
+                        for nuz in self.stanzmesserliste.nalezeno:
+                                seznam = nuz[0:12]
+                                dalsi1 = str(nuz[34:35])
+                                dalsi1 = dalsi1.replace("'", "").replace("[", "").replace("]", "")
+                                seznam.append(dalsi1)
+                                dalsi2 = str(nuz[12:13])
+                                if dalsi2 == "[nan]":
+                                        dalsi2 = ""
+                                else:
+                                        pass
+                                dalsi2 = dalsi2.replace("'", "").replace("[", "").replace("]", "")
+                                seznam.append(dalsi2)
+                                zobrazit.append(seznam)
+
+                        for pot in self.tree_zaznamy.get_children():
+                                self.tree_zaznamy.delete(pot)
+
+                        pozice = 0   
+                        for Stanze, End_vyska, End_sirka, O_vyska, sirka, Sch_k, PSK, B_K, PBK, L, P, Prek, Bem, POU in zobrazit:
+                                self.tree_zaznamy.insert("", "end", text=pozice, values=(Stanze, End_vyska, End_sirka, O_vyska,
+                                        sirka, Sch_k, PSK, B_K, PBK, L, P, Prek, Bem, POU))
+                                pozice += 1
+                        return
+
+                        for pot in self.tree_zaznamy.get_children():
+                                self.tree_zaznamy.delete(pot)
+
+                        pozice = 0   
+                        for Stanze, End_vyska, End_sirka, O_vyska, sirka, Sch_k, PSK, B_K, PBK, L, P, Prek, Bem, POU in zobrazit:
+                                self.tree_zaznamy.insert("", "end", text=pozice, values=(Stanze, End_vyska, End_sirka, O_vyska,
+                                        sirka, Sch_k, PSK, B_K, PBK, L, P, Prek, Bem, POU))
+                                pozice += 1
+                                return
+                
+                else:
+                        SK1 = int(SK1)
+                        SK2 = int(SK2)
+                        if SK2 < SK1:
+                                tk.messagebox.showwarning("ERROR", "falsche Eingabe\nchyba zadání")
+                                return
+                        else:
+                                SK = sirka[(sirka["Sch_k"] >= SK1) & (sirka["Sch_k"] <= SK2)]
+                                SK.head()
+                                self.stanzmesserliste.nalezeno = SK.values.tolist()
+                                
+                                zobrazit = []
+                                seznam = []
+                                for nuz in self.stanzmesserliste.nalezeno:
+                                        seznam = nuz[0:12]
+                                        dalsi1 = str(nuz[34:35])
+                                        dalsi1 = dalsi1.replace("'", "").replace("[", "").replace("]", "")
+                                        seznam.append(dalsi1)
+                                        dalsi2 = str(nuz[12:13])
+                                        if dalsi2 == "[nan]":
+                                                dalsi2 = ""
+                                        else:
+                                                pass
+                                        dalsi2 = dalsi2.replace("'", "").replace("[", "").replace("]", "")
+                                        seznam.append(dalsi2)
+                                        zobrazit.append(seznam)
+
+                                for pot in self.tree_zaznamy.get_children():
+                                        self.tree_zaznamy.delete(pot)
+
+                                pozice = 0   
+                                for Stanze, End_vyska, End_sirka, O_vyska, sirka, Sch_k, PSK, B_K, PBK, L, P, Prek, Bem, POU in zobrazit:
+                                        self.tree_zaznamy.insert("", "end", text=pozice, values=(Stanze, End_vyska, End_sirka, O_vyska,
+                                                sirka, Sch_k, PSK, B_K, PBK, L, P, Prek, Bem, POU))
+                                        pozice += 1
+                                return
+
 
