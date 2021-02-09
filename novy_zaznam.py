@@ -109,3 +109,91 @@ def vytvor_top_novy_zaznam(self):
 
         self.button_Konec = tk.Button(self.top_novy_zaznam, text="Konec", width=33, command=self.top_novy_zaznam.destroy, fg="red", font="Arial 14")
         self.button_Konec.grid(row=14, column=1)
+
+def ulozit_novy_nuz(self, cesta_souboru):
+    stanze = self.entry_stanze.get()
+    if stanze == "":
+        tk.messagebox.showwarning("ERROR", "falsche Eingabe\nchyba zadání")
+        return
+    elif "_" in stanze:
+        pass
+    elif "/" in stanze:
+        stanze = stanze.replace("/", "_")
+    else:
+        tk.messagebox.showwarning("ERROR", "falsche Eingabe\nchyba zadání")
+        return
+    konecna_vyska = self.entry_konecna_vyska.get()
+    konecna_sirka = self.entry_konecna_sirka.get()
+    otevrena_vyska = self.entry_otevrena_vyska.get()
+    otevrena_sirka = self.entry_otevrena_sirka.get()
+    zaverna_klapka = self.entry_zaverna_klapka.get()
+    prodlouzena_zaverna = self.entry_prodlouzena_zaverna.get()
+    spodni_klapka = self.entry_spodni_klapka.get()
+    prodlouzena_spodni = self.entry_prodlouzena_spodni.get()
+    bocni_leva = self.entry_bocni_leva.get()
+    bocni_prava = self.entry_bocni_prava.get()
+    try:
+        prekryti = str(float(spodni_klapka) + float(zaverna_klapka) - float(konecna_vyska))
+        poznamky = self.entry_poznamky.get()
+        pouzity = self.var.get()
+        if pouzity == 0:
+            pouzity = "NE"
+        else:
+            pouzity = "ANO"
+        lepidlo_bocni_klapka_venku_1 = str(float(bocni_leva) - 6 + 2)
+        lepidlo_bocni_klapka_venku_2 = str(float(spodni_klapka) - 5)
+        lepidlo_bocni_venku_X = str(((float(konecna_sirka) / 2)+(float(bocni_leva) / 2 + 6)) * -1)
+        lepidlo_bocni_venku_Y = str(float(konecna_vyska) - float(konecna_vyska))
+        lepidlo_spodni_klapka_venku_1 = str(float(konecna_sirka) - float(bocni_leva) - float(bocni_prava))
+        lepidlo_spodni_klapka_venku_2 = str(float(prekryti) - 5 + 3.5)
+        lepidlo_spodni_klapka_venku_X = str(float(konecna_vyska) - float(konecna_vyska))
+        lepidlo_spodni_klapka_venku_Y = str(float(spodni_klapka) + 2)
+        lepidlo_bocni_klapka_uvnitr_1 = str(float(bocni_leva))
+        lepidlo_bocni_klapka_uvnitr_2 = str(float(lepidlo_bocni_klapka_venku_2) - 5)
+        lepidlo_bocni_klapka_uvnitr_X = str((float(konecna_sirka) / 2 + 2)-(float(lepidlo_bocni_klapka_uvnitr_1) / 2))
+        lepidlo_bocni_klapka_uvnitr_Y = str(float(lepidlo_bocni_klapka_uvnitr_2) + 5)
+        lepidlo_zaverna_klapka_uvnitr_1 = str(float(prekryti) + 2)
+        lepidlo_zaverna_klapka_uvnitr_2 = str(float(konecna_sirka) - float(bocni_leva) - float(bocni_prava))
+        lepidlo_zaverna_klapka_uvnitr_X = str(float(konecna_sirka) - float(konecna_sirka))
+        lepidlo_zaverna_klapka_uvnitr_Y = str(float(konecna_vyska) + float(zaverna_klapka) - float(lepidlo_zaverna_klapka_uvnitr_1) + 2) * -1
+        bocni_vysekovka_1 = str(float(konecna_sirka) / 2 + float(bocni_leva))
+        bocni_vysekovka_2 = str((float(spodni_klapka) - 15) * -1)
+        spodni_vysekovka_1 = str(float(konecna_sirka) / 2 - 27)
+        spodni_vysekovka_2 = str(float(spodni_klapka))
+        simulace = str(2 - float(otevrena_vyska) + float(prekryti))
+    except ValueError:
+        tk.messagebox.showwarning("ERROR", "falsche Eingabe\nchyba zadání")
+        return
+    else:
+        try:
+            with open(cesta_souboru, mode="r", encoding="utf-8") as test_souboru:
+                test_souboru = test_souboru.read()
+        except FileNotFoundError:
+            tk.messagebox.showwarning("ERROR", "Soubor s daty nenalezen")
+
+        else:
+            with open(cesta_souboru, mode="a", encoding="utf-8") as pridat:
+                print(stanze + ";" + konecna_vyska + ";" + konecna_sirka + ";" + otevrena_vyska + ";" + 
+                        otevrena_sirka + ";" + zaverna_klapka + ";" + prodlouzena_zaverna + ";" + spodni_klapka + ";" + prodlouzena_spodni + ";" + 
+                        bocni_leva + ";" + bocni_prava + ";" + prekryti + ";" + poznamky + ";" + lepidlo_bocni_klapka_venku_1 + ";" + lepidlo_bocni_klapka_venku_2 + ";" + 
+                        lepidlo_bocni_venku_X + ";" + lepidlo_bocni_venku_Y + ";" + lepidlo_spodni_klapka_venku_1 + ";" + lepidlo_spodni_klapka_venku_2 + ";" + 
+                        lepidlo_spodni_klapka_venku_X + ";" + lepidlo_spodni_klapka_venku_Y + ";" + lepidlo_bocni_klapka_uvnitr_1 + ";" + lepidlo_bocni_klapka_uvnitr_2 + ";" + 
+                        lepidlo_bocni_klapka_uvnitr_X + ";" + lepidlo_bocni_klapka_uvnitr_Y + ";" + lepidlo_zaverna_klapka_uvnitr_1 + ";" + lepidlo_zaverna_klapka_uvnitr_2 + ";" + 
+                        lepidlo_zaverna_klapka_uvnitr_X + ";" + lepidlo_zaverna_klapka_uvnitr_Y + ";" + bocni_vysekovka_1 + ";" + bocni_vysekovka_2 + ";" + 
+                        spodni_vysekovka_1 + ";" + spodni_vysekovka_2 + ";" + simulace + ";" + pouzity, file=pridat)
+
+    self.nuz.set("")
+    self.kv.set("")
+    self.ks.set("")
+    self.ov.set("")
+    self.os.set("")
+    self.zk.set("")
+    self.pzk.set("")
+    self.sk.set("")
+    self.psk.set("")
+    self.bl.set("")
+    self.bp.set("")
+    self.poz.set("")
+    self.var.set(0)
+
+    tk.messagebox.showwarning("Hotovo", "Nový nůž uložen.")
