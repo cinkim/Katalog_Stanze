@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk, StringVar, NORMAL, CENTER, N, S, E, W
 from tkinter import LEFT, NO, DISABLED, NORMAL
 import tkinter.messagebox
+import csv
+import pandas as pd 
+import numpy as np
 
 def vytvor_top_souradnic_prepress(self):
         self.top_souradnice = tk.Toplevel()
@@ -108,3 +111,66 @@ def vytvor_top_souradnic_prepress(self):
 
         self.button_Konec = tk.Button(self.top_souradnice, text="Konec", width=17, command=self.top_souradnice.destroy, fg="red")
         self.button_Konec.grid(row=8, column=0, sticky=W)
+
+def nuzproprepress(self, cesta_souboru):
+        try:
+            stanze_prepress = self.c_noze_Entry10.get()
+            if stanze_prepress == "":
+                return
+            elif "/" in stanze_prepress:
+                stanze_prepress = stanze_prepress.replace("/", "_")
+            elif "_" not in stanze_prepress:
+                tk.messagebox.showwarning("ERROR", "Chybí oddělovač\n '_'")
+                return
+        except:
+            tk.messagebox.showwarning("ERROR", "Nějaká chyba na vstupu.")
+            return
+        else:
+            sloupce = ["Stanze", "End_vyska", "End_sirka", "O_vyska",
+                        "O_sirka", "Sch_k", "PSK", "B_K", "PBK", "L", "P", "Prek", "Bem", "LBKV_1", "LBKV_2", "LBV_X", "LBV_Y", "LSKV_1", "LSKV_2",
+                        "LSKV_X", "LSKV_Y", "LBKU_1", "LBKU_2", "LBKU_X", "LBKU_Y", "LZKU_1", "LZKU_2", "LZKU_X", "LZKU_Y", "BV_1", "BV_2",
+                        "SV_1", "SV_2", "SIM", "POU"]
+
+            typy = {"Stanze": np.object, "End_vyska": np.int64, "End_sirka": np.int64, "O_vyska": np.float64,
+                    "O_sirka": np.float64, "Sch_k": np.float64, "PSK": np.float64, "B_K": np.float64, "PBK": np.float64, "L": np.float64, "P": np.float64,
+                    "Prek": np.float64, "Bem": np.object, "LBKV_1": np.float64, "LBKV_2": np.float64, "LBV_X": np.float64, "LBV_Y": np.float64, "LSKV_1": np.float64, "LSKV_2": np.float64,
+                    "LSKV_X": np.float64, "LSKV_Y": np.float64, "LBKU_1": np.float64, "LBKU_2": np.float64, "LBKU_X": np.float64, "LBKU_Y": np.float64,
+                    "LZKU_1": np.float64, "LZKU_2": np.float64, "LZKU_X": np.float64, "LZKU_Y": np.float64, "BV_1": np.float64, "BV_2": np.float64,
+                    "SV_1": np.float64, "SV_2": np.float64, "SIM": np.float64, "POU": np.object}
+
+            data = pd.read_csv(cesta_souboru, names=sloupce, dtype=typy, delimiter=";")
+
+
+            nalezeno = data[(data["Stanze"] == stanze_prepress)]
+            nalezeno.head()
+
+            stanzmesserliste_prepress = nalezeno.values.tolist()
+        koty1_zobraz = []
+        koty2_zobraz = []
+        for qq in stanzmesserliste_prepress:
+            koty1 = qq[13:21] 
+            koty1 = koty1 + (qq[29:33])
+            koty1_zobraz.append(koty1)
+            koty2 = (qq[21:29])
+            koty2 = koty2 + (qq[11:12])
+            koty2 = koty2 + (qq[33:34])
+            koty2_zobraz.append(koty2)
+            break
+
+        for pot in self.tree_koty1.get_children():
+            self.tree_koty1.delete(pot)
+
+        for pot in self.tree_koty2.get_children():
+            self.tree_koty2.delete(pot)
+
+        pozice1 = 0   
+        for LBKV_1, LBKV_2, LBV_X, LBV_Y, LSKV_1, LSKV_2, LSKV_X, LSKV_Y, BV_1, BV_2, SV_1, SV_2 in koty1_zobraz:
+            self.tree_koty1.insert("", "end", text=pozice1, values=(LBKV_1, LBKV_2, LBV_X, LBV_Y, LSKV_1, LSKV_2, LSKV_X, 
+                LSKV_Y, BV_1, BV_2, SV_1, SV_2))
+            pozice1 += 1
+
+        pozice2 = 0   
+        for LBKU_1, LBKU_2, LBKU_X, LBKU_Y, LZKU_1, LZKU_2, LZKU_X, LZKU_Y, Prek, Sim in koty2_zobraz:
+            self.tree_koty2.insert("", "end", text=pozice2, values=(LBKU_1, LBKU_2, LBKU_X, LBKU_Y, LZKU_1, LZKU_2, LZKU_X, LZKU_Y, Prek, Sim))
+            pozice2 += 1
+            return
