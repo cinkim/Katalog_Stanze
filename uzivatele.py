@@ -1,7 +1,7 @@
 print("Správa uživatelů")
 print()
 import os
-cesta = "D:/Python/Projekty_Python/Katalog_nozu/uzivatele.taj"
+cesta = "uzivatele.taj"
 
 def nacti_soubor(cesta):
     try:
@@ -24,7 +24,7 @@ def volba():
     while True:
         print("Zadej volbu výběru:")
         print()
-        print("1 - Zobrazí oktuální uživatele s Admin přístupem:")
+        print("1 - Zobraz aktuální uživatele s Admin přístupem:")
         print("2 - Přidá uživatele:")
         print("3 - Smaže uživatele:")
         print("0 - pro ukončení programu:")
