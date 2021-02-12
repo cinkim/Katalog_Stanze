@@ -167,6 +167,7 @@ def odeslat(self, cesta_pro_PDF, nalezeno, pozice_k_odeslani):
                                         pdf = cesta_pro_PDF + pdf
                                         mail.Attachments.Add(pdf)
                                         mail.Display(False)
+                                self.stanzmesserliste.pozice_k_odeslani = []
                                 return
 
 
@@ -179,41 +180,46 @@ def najdi(self, cesta_souboru):
         self.stanzmesserliste.nalezeno = []
         self.stanzmesserliste.pro_zobrazeni = []
         try:
-            nuz = self.c_noze_Entry.get()
-            if nuz == "":
-                tk.messagebox.showwarning("ERROR", "falsche Eingabe\nfehlende Messernummer")
-                return
-            elif "/" in nuz:
-                nuz = nuz.replace("/", "_")
-            elif "_" not in nuz:
-                tk.messagebox.showwarning("ERROR", "falsche Eingabe\nfehlender Begrenzer '_'")
-                return
+                nuz = self.c_noze_Entry.get()
+                if nuz == "":
+                        tk.messagebox.showwarning("ERROR", "falsche Eingabe\nfehlende Messernummer")
+                        return
+                elif "/" in nuz:
+                        nuz = nuz.replace("/", "_")
+                elif "_" not in nuz:
+                        tk.messagebox.showwarning("ERROR", "falsche Eingabe\nfehlender Begrenzer '_'")
+                        return
         except ValueError:
-            tk.messagebox.showwarning("ERROR", "falsche Eingabe")
-            return
-        else:
-            sloupce = ["Stanze", "End_vyska", "End_sirka", "O_vyska",
-                        "O_sirka", "Sch_k", "PSK", "B_K", "PBK", "L", "P", "Prek", "Bem", "LBKV_1", "LBKV_2", "LBV_X", "LBV_Y", "LSKV_1", "LSKV_2",
-                        "LSKV_X", "LSKV_Y", "LBKU_1", "LBKU_2", "LBKU_X", "LBKU_Y", "LZKU_1", "LZKU_2", "LZKU_X", "LZKU_Y", "BV_1", "BV_2",
-                        "SV_1", "SV_2", "SIM", "POU"]
-
-            typy = {"Stanze": np.object, "End_vyska": np.int64, "End_sirka": np.int64, "O_vyska": np.float64,
-                    "O_sirka": np.float64, "Sch_k": np.float64, "PSK": np.float64, "B_K": np.float64, "PBK": np.float64, "L": np.float64, "P": np.float64,
-                    "Prek": np.float64, "Bem": np.object, "LBKV_1": np.float64, "LBKV_2": np.float64, "LBV_X": np.float64, "LBV_Y": np.float64, "LSKV_1": np.float64, "LSKV_2": np.float64,
-                    "LSKV_X": np.float64, "LSKV_Y": np.float64, "LBKU_1": np.float64, "LBKU_2": np.float64, "LBKU_X": np.float64, "LBKU_Y": np.float64,
-                    "LZKU_1": np.float64, "LZKU_2": np.float64, "LZKU_X": np.float64, "LZKU_Y": np.float64, "BV_1": np.float64, "BV_2": np.float64,
-                    "SV_1": np.float64, "SV_2": np.float64, "SIM": np.float64, "POU": np.object}
-
-            data = pd.read_csv(cesta_souboru, names=sloupce, dtype=typy, delimiter=";")
-
-
-            nuz = data[(data["Stanze"] == nuz)]
-            nuz.head()
-
-            nalezeno = nuz.values.tolist()
-            if nalezeno == []:
-                tk.messagebox.showwarning("ERROR", "keine Daten")
+                tk.messagebox.showwarning("ERROR", "falsche Eingabe")
                 return
+        else:
+                sloupce = ["Stanze", "End_vyska", "End_sirka", "O_vyska",
+                                "O_sirka", "Sch_k", "PSK", "B_K", "PBK", "L", "P", "Prek", "Bem", "LBKV_1", "LBKV_2", "LBV_X", "LBV_Y", "LSKV_1", "LSKV_2",
+                                "LSKV_X", "LSKV_Y", "LBKU_1", "LBKU_2", "LBKU_X", "LBKU_Y", "LZKU_1", "LZKU_2", "LZKU_X", "LZKU_Y", "BV_1", "BV_2",
+                                "SV_1", "SV_2", "SIM", "POU"]
+
+                typy = {"Stanze": np.object, "End_vyska": np.int64, "End_sirka": np.int64, "O_vyska": np.float64,
+                        "O_sirka": np.float64, "Sch_k": np.float64, "PSK": np.float64, "B_K": np.float64, "PBK": np.float64, "L": np.float64, "P": np.float64,
+                        "Prek": np.float64, "Bem": np.object, "LBKV_1": np.float64, "LBKV_2": np.float64, "LBV_X": np.float64, "LBV_Y": np.float64, "LSKV_1": np.float64, "LSKV_2": np.float64,
+                        "LSKV_X": np.float64, "LSKV_Y": np.float64, "LBKU_1": np.float64, "LBKU_2": np.float64, "LBKU_X": np.float64, "LBKU_Y": np.float64,
+                        "LZKU_1": np.float64, "LZKU_2": np.float64, "LZKU_X": np.float64, "LZKU_Y": np.float64, "BV_1": np.float64, "BV_2": np.float64,
+                        "SV_1": np.float64, "SV_2": np.float64, "SIM": np.float64, "POU": np.object}
+                while True:
+                        try:
+                                data = pd.read_csv(cesta_souboru, names=sloupce, dtype=typy, delimiter=";")
+                        except FileNotFoundError:
+                                tk.messagebox.showwarning("ERROR", "Soubor s daty nenalezen.")
+                        except PermissionError:
+                                tk.messagebox.showwarning("ERROR", "Přístup odepřen.")
+                        else:
+                                nuz = data[(data["Stanze"] == nuz)]
+                                nuz.head()
+
+                                nalezeno = nuz.values.tolist()
+                                break
+                if nalezeno == []:
+                        tk.messagebox.showwarning("ERROR", "keine Daten")
+                        return
 
         self.stanzmesserliste.pro_zobrazeni = []
         seznam = []
@@ -275,7 +281,14 @@ def najdi_noze(self, cesta_souboru):
                         "LZKU_1": np.float64, "LZKU_2": np.float64, "LZKU_X": np.float64, "LZKU_Y": np.float64, "BV_1": np.float64, "BV_2": np.float64,
                         "SV_1": np.float64, "SV_2": np.float64, "SIM": np.float64, "POU": np.object}
 
-                data = pd.read_csv(cesta_souboru, names=sloupce, dtype=typy, delimiter=";")
+                while True:
+                        try:
+                                data = pd.read_csv(cesta_souboru, names=sloupce, dtype=typy, delimiter=";")
+                                break
+                        except FileNotFoundError:
+                                tk.messagebox.showwarning("ERROR", "Soubor s daty nenalezen.")
+                        except PermissionError:
+                                tk.messagebox.showwarning("ERROR", "Přístup odepřen.")
 
                 if vyska2 == "":
                         vyska2 = int(vyska1)
