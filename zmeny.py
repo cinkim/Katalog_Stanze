@@ -128,26 +128,31 @@ def zmeny_v_datech(self, cesta_souboru):
                 self.c_noze_zmenaE.config(state=DISABLED)
         else:
                 return
+        try:
+                with open(cesta_souboru, mode="r", encoding="utf-8") as noze:
+                        noze = csv.reader(noze, delimiter=";")
+                        for radka in noze:
+                                if radka[0] != nuz:
+                                        pass
+                                else:
+                                        self.kv_zmena.set(radka[1])
+                                        self.ks_zmena.set(radka[2])
+                                        self.ov_zmena.set(radka[3])
+                                        self.os_zmena.set(radka[4])
+                                        self.zk_zmena.set(radka[5])
+                                        self.pzk_zmena.set(radka[6])
+                                        self.sk_zmena.set(radka[7])
+                                        self.psk_zmena.set(radka[8])
+                                        self.bl_zmena.set(radka[9])
+                                        self.bp_zmena.set(radka[10])
+                                        self.poz_zmena.set(radka[12])
+                                        self.aktiv_zmena.set(radka[34])
+                                        return
+        except PermissionError:
+                tk.messagebox.showwarning("ERROR", "Přístup odepřen")
+        except FileNotFoundError:
+                tk.messagebox.showwarning("ERROR", "Soubor s daty nenalezen.")
 
-        with open(cesta_souboru, mode="r", encoding="utf-8") as noze:
-                noze = csv.reader(noze, delimiter=";")
-                for radka in noze:
-                        if radka[0] != nuz:
-                                pass
-                        else:
-                                self.kv_zmena.set(radka[1])
-                                self.ks_zmena.set(radka[2])
-                                self.ov_zmena.set(radka[3])
-                                self.os_zmena.set(radka[4])
-                                self.zk_zmena.set(radka[5])
-                                self.pzk_zmena.set(radka[6])
-                                self.sk_zmena.set(radka[7])
-                                self.psk_zmena.set(radka[8])
-                                self.bl_zmena.set(radka[9])
-                                self.bp_zmena.set(radka[10])
-                                self.poz_zmena.set(radka[12])
-                                self.aktiv_zmena.set(radka[34])
-                                return
 
 
 def ulozit_zmeny(self, cesta_souboru):
@@ -200,48 +205,54 @@ def ulozit_zmeny(self, cesta_souboru):
                 lepidlo_zaverna_klapka_uvnitr_2 + ";" + lepidlo_zaverna_klapka_uvnitr_X + ";" + lepidlo_zaverna_klapka_uvnitr_Y + ";" +
                 bocni_vysekovka_1 + ";" + bocni_vysekovka_2 + ";" + podni_vysekovka_1 + ";" + spodni_vysekovka_2 + ";" + simulace + ";" + akt)
 
-                novy_seznam = []
-                with open(cesta_souboru, mode="r", encoding="utf-8") as novy:
-                        novy = csv.reader(novy, delimiter=";")
-                        for radka in novy:
-                                if radka[0] != nuz:
-                                        novy_seznam.append(radka)
-                                else:
-                                        novy_seznam.append(pozmene.split(";"))
+                while True:
+                        try:
+                                novy_seznam = []
+                                with open(cesta_souboru, mode="r", encoding="utf-8") as novy:
+                                        novy = csv.reader(novy, delimiter=";")
+                                        for radka in novy:
+                                                if radka[0] != nuz:
+                                                        novy_seznam.append(radka)
+                                                else:
+                                                        novy_seznam.append(pozmene.split(";"))
 
 
-                with open(cesta_souboru, mode="w", encoding="utf-8") as zapis:
-                        for rad in novy_seznam:
-                                sss = ""
-                                pocet = len(rad)
-                                pocet_cyklu = 0
-                                for neco in rad:
-                                        neco.replace('"', "")
-                                        pocet_cyklu+=1
-                                        if pocet_cyklu == 35:
-                                                sss = sss + neco
-                                        else:
-                                                sss = sss + neco + ";"
-                                print(sss, file=zapis)
-  
+                                with open(cesta_souboru, mode="w", encoding="utf-8") as zapis:
+                                        for rad in novy_seznam:
+                                                sss = ""
+                                                pocet = len(rad)
+                                                pocet_cyklu = 0
+                                                for neco in rad:
+                                                        neco.replace('"', "")
+                                                        pocet_cyklu+=1
+                                                        if pocet_cyklu == 35:
+                                                                sss = sss + neco
+                                                        else:
+                                                                sss = sss + neco + ";"
+                                                print(sss, file=zapis)
                 
-                self.c_noze_zmenaE.config(state=NORMAL)
-                self.nuz_zmena.set("")
-                self.kv_zmena.set("")
-                self.ks_zmena.set("")
-                self.ov_zmena.set("")
-                self.os_zmena.set("")
-                self.zk_zmena.set("")
-                self.pzk_zmena.set("")
-                self.sk_zmena.set("")
-                self.psk_zmena.set("")
-                self.bl_zmena.set("")
-                self.bp_zmena.set("")
-                self.poz_zmena.set("")
-                self.aktiv_zmena.set("")
+                                
+                                self.c_noze_zmenaE.config(state=NORMAL)
+                                self.nuz_zmena.set("")
+                                self.kv_zmena.set("")
+                                self.ks_zmena.set("")
+                                self.ov_zmena.set("")
+                                self.os_zmena.set("")
+                                self.zk_zmena.set("")
+                                self.pzk_zmena.set("")
+                                self.sk_zmena.set("")
+                                self.psk_zmena.set("")
+                                self.bl_zmena.set("")
+                                self.bp_zmena.set("")
+                                self.poz_zmena.set("")
+                                self.aktiv_zmena.set("")
 
-                tk.messagebox.showwarning("Hotovo", "Změna uložena.")
-                return
+                                tk.messagebox.showwarning("Hotovo", "Změna uložena.")
+                                return
+                        except FileNotFoundError:
+                                tk.messagebox.showwarning("ERROR", "Soubor s daty nenalezen.")
+                        except PermissionError:
+                                tk.messagebox.showwarning("ERROR", "Přístup odepřen.")
 
 
 def smazat_zaznam(self, cesta_souboru):
@@ -255,49 +266,58 @@ def smazat_zaznam(self, cesta_souboru):
                         pass
                 elif "/" in nuz:
                         nuz = nuz.replace("/", "_")
-
-                novy_seznam2 = []
-                with open(cesta_souboru, mode="r", encoding="utf-8") as novy2:
-                        novy2 = csv.reader(novy2, delimiter=";")
-                        mame = ""
-                        for radka in novy2:
-                                if radka[0] != nuz:
-                                        novy_seznam2.append(radka)
+                while True:
+                        try:
+                                novy_seznam2 = []
+                                with open(cesta_souboru, mode="r", encoding="utf-8") as novy2:
+                                        novy2 = csv.reader(novy2, delimiter=";")
+                                        mame = ""
+                                        for radka in novy2:
+                                                if radka[0] != nuz:
+                                                        novy_seznam2.append(radka)
+                                                else:
+                                                        mame = "ano"
+                        except FileNotFoundError:
+                                tk.messagebox.showwarning("ERROR", "Soubor s daty nenalezen.")
+                        else:
+                                if mame == "":
+                                        tk.messagebox.showwarning("????", "Nůž nenalezen.")
+                                        return
+                        while True:
+                                try:       
+                                        with open(cesta_souboru, mode="w", encoding="utf-8") as zapis2:
+                                                for rad2 in novy_seznam2:
+                                                        sss = ""
+                                                        pocet = len(rad2)
+                                                        pocet_cyklu = 0
+                                                        for neco in rad2:
+                                                                neco.replace('"', "")
+                                                                pocet_cyklu+=1
+                                                                if pocet_cyklu == 35:
+                                                                        sss = sss + neco
+                                                                else:
+                                                                        sss = sss + neco + ";"
+                                                        print(sss, file=zapis2)
+                                except PermissionError:
+                                        tk.messagebox.showwarning("ERROR", "Přístup odepřen")
                                 else:
-                                        mame = "ano"
-
-                if mame == "":
-                        tk.messagebox.showwarning("????", "Nůž nenalezen.")
-                        return
-                        
-                with open(cesta_souboru, mode="w", encoding="utf-8") as zapis2:
-                        for rad2 in novy_seznam2:
-                                sss = ""
-                                pocet = len(rad2)
-                                pocet_cyklu = 0
-                                for neco in rad2:
-                                        neco.replace('"', "")
-                                        pocet_cyklu+=1
-                                        if pocet_cyklu == 35:
-                                                sss = sss + neco
-                                        else:
-                                                sss = sss + neco + ";"
-                                print(sss, file=zapis2)
-                self.nuz_zmena.set("")
-                self.kv_zmena.set("")
-                self.ks_zmena.set("")
-                self.ov_zmena.set("")
-                self.os_zmena.set("")
-                self.zk_zmena.set("")
-                self.pzk_zmena.set("")
-                self.sk_zmena.set("")
-                self.psk_zmena.set("")
-                self.bl_zmena.set("")
-                self.bp_zmena.set("")
-                self.poz_zmena.set("")
-                self.aktiv_zmena.set("")
-                self.c_noze_zmenaE.config(state=NORMAL)
-                tk.messagebox.showwarning("Hotovo", "Záznam smazán.")
+                                        self.nuz_zmena.set("")
+                                        self.kv_zmena.set("")
+                                        self.ks_zmena.set("")
+                                        self.ov_zmena.set("")
+                                        self.os_zmena.set("")
+                                        self.zk_zmena.set("")
+                                        self.pzk_zmena.set("")
+                                        self.sk_zmena.set("")
+                                        self.psk_zmena.set("")
+                                        self.bl_zmena.set("")
+                                        self.bp_zmena.set("")
+                                        self.poz_zmena.set("")
+                                        self.aktiv_zmena.set("")
+                                        self.c_noze_zmenaE.config(state=NORMAL)
+                                        tk.messagebox.showwarning("Hotovo", "Záznam smazán.")
+                                        break
+                        break
                 
         else:
             pass
