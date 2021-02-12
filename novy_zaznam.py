@@ -113,15 +113,16 @@ def vytvor_top_novy_zaznam(self):
 def ulozit_novy_nuz(self, cesta_souboru):
     stanze = self.entry_stanze.get()
     if stanze == "":
-        tk.messagebox.showwarning("ERROR", "falsche Eingabe\nchyba zadání")
+        tk.messagebox.showwarning("ERROR", "Chyba v zadání.")
         return
     elif "_" in stanze:
         pass
     elif "/" in stanze:
         stanze = stanze.replace("/", "_")
     else:
-        tk.messagebox.showwarning("ERROR", "falsche Eingabe\nchyba zadání")
+        tk.messagebox.showwarning("ERROR", "Chyba v zadání.")
         return
+
     konecna_vyska = self.entry_konecna_vyska.get()
     konecna_sirka = self.entry_konecna_sirka.get()
     otevrena_vyska = self.entry_otevrena_vyska.get()
@@ -132,6 +133,7 @@ def ulozit_novy_nuz(self, cesta_souboru):
     prodlouzena_spodni = self.entry_prodlouzena_spodni.get()
     bocni_leva = self.entry_bocni_leva.get()
     bocni_prava = self.entry_bocni_prava.get()
+
     try:
         prekryti = str(float(spodni_klapka) + float(zaverna_klapka) - float(konecna_vyska))
         poznamky = self.entry_poznamky.get()
@@ -162,25 +164,28 @@ def ulozit_novy_nuz(self, cesta_souboru):
         spodni_vysekovka_2 = str(float(spodni_klapka))
         simulace = str(2 - float(otevrena_vyska) + float(prekryti))
     except ValueError:
-        tk.messagebox.showwarning("ERROR", "falsche Eingabe\nchyba zadání")
+        tk.messagebox.showwarning("ERROR", "Chyba v zadání.")
         return
     else:
-        try:
-            with open(cesta_souboru, mode="r", encoding="utf-8") as test_souboru:
-                test_souboru = test_souboru.read()
-        except FileNotFoundError:
-            tk.messagebox.showwarning("ERROR", "Soubor s daty nenalezen")
-
-        else:
-            with open(cesta_souboru, mode="a", encoding="utf-8") as pridat:
-                print(stanze + ";" + konecna_vyska + ";" + konecna_sirka + ";" + otevrena_vyska + ";" + 
-                        otevrena_sirka + ";" + zaverna_klapka + ";" + prodlouzena_zaverna + ";" + spodni_klapka + ";" + prodlouzena_spodni + ";" + 
-                        bocni_leva + ";" + bocni_prava + ";" + prekryti + ";" + poznamky + ";" + lepidlo_bocni_klapka_venku_1 + ";" + lepidlo_bocni_klapka_venku_2 + ";" + 
-                        lepidlo_bocni_venku_X + ";" + lepidlo_bocni_venku_Y + ";" + lepidlo_spodni_klapka_venku_1 + ";" + lepidlo_spodni_klapka_venku_2 + ";" + 
-                        lepidlo_spodni_klapka_venku_X + ";" + lepidlo_spodni_klapka_venku_Y + ";" + lepidlo_bocni_klapka_uvnitr_1 + ";" + lepidlo_bocni_klapka_uvnitr_2 + ";" + 
-                        lepidlo_bocni_klapka_uvnitr_X + ";" + lepidlo_bocni_klapka_uvnitr_Y + ";" + lepidlo_zaverna_klapka_uvnitr_1 + ";" + lepidlo_zaverna_klapka_uvnitr_2 + ";" + 
-                        lepidlo_zaverna_klapka_uvnitr_X + ";" + lepidlo_zaverna_klapka_uvnitr_Y + ";" + bocni_vysekovka_1 + ";" + bocni_vysekovka_2 + ";" + 
-                        spodni_vysekovka_1 + ";" + spodni_vysekovka_2 + ";" + simulace + ";" + pouzity, file=pridat)
+        while True:
+            try:
+                with open(cesta_souboru, mode="r", encoding="utf-8") as test_souboru:
+                    test_souboru = test_souboru.read()
+            except FileNotFoundError:
+                tk.messagebox.showwarning("ERROR", "Soubor s daty nenalezen")
+            except PermissionError:
+                tk.messagebox.showwarning("ERROR", "Přístup odepřen")
+            else:
+                with open(cesta_souboru, mode="a", encoding="utf-8") as pridat:
+                    print(stanze + ";" + konecna_vyska + ";" + konecna_sirka + ";" + otevrena_vyska + ";" + 
+                            otevrena_sirka + ";" + zaverna_klapka + ";" + prodlouzena_zaverna + ";" + spodni_klapka + ";" + prodlouzena_spodni + ";" + 
+                            bocni_leva + ";" + bocni_prava + ";" + prekryti + ";" + poznamky + ";" + lepidlo_bocni_klapka_venku_1 + ";" + lepidlo_bocni_klapka_venku_2 + ";" + 
+                            lepidlo_bocni_venku_X + ";" + lepidlo_bocni_venku_Y + ";" + lepidlo_spodni_klapka_venku_1 + ";" + lepidlo_spodni_klapka_venku_2 + ";" + 
+                            lepidlo_spodni_klapka_venku_X + ";" + lepidlo_spodni_klapka_venku_Y + ";" + lepidlo_bocni_klapka_uvnitr_1 + ";" + lepidlo_bocni_klapka_uvnitr_2 + ";" + 
+                            lepidlo_bocni_klapka_uvnitr_X + ";" + lepidlo_bocni_klapka_uvnitr_Y + ";" + lepidlo_zaverna_klapka_uvnitr_1 + ";" + lepidlo_zaverna_klapka_uvnitr_2 + ";" + 
+                            lepidlo_zaverna_klapka_uvnitr_X + ";" + lepidlo_zaverna_klapka_uvnitr_Y + ";" + bocni_vysekovka_1 + ";" + bocni_vysekovka_2 + ";" + 
+                            spodni_vysekovka_1 + ";" + spodni_vysekovka_2 + ";" + simulace + ";" + pouzity, file=pridat)
+                    break
 
     self.nuz.set("")
     self.kv.set("")
