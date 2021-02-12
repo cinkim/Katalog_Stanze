@@ -124,6 +124,7 @@ def nuzproprepress(self, cesta_souboru):
             elif "_" not in stanze_prepress:
                 tk.messagebox.showwarning("ERROR", "Chybí oddělovač\n '_'")
                 return
+            
         except:
             tk.messagebox.showwarning("ERROR", "Nějaká chyba na vstupu.")
             return
@@ -140,13 +141,17 @@ def nuzproprepress(self, cesta_souboru):
                     "LZKU_1": np.float64, "LZKU_2": np.float64, "LZKU_X": np.float64, "LZKU_Y": np.float64, "BV_1": np.float64, "BV_2": np.float64,
                     "SV_1": np.float64, "SV_2": np.float64, "SIM": np.float64, "POU": np.object}
 
-            data = pd.read_csv(cesta_souboru, names=sloupce, dtype=typy, delimiter=";")
-
-
-            nalezeno = data[(data["Stanze"] == stanze_prepress)]
-            nalezeno.head()
-
-            stanzmesserliste_prepress = nalezeno.values.tolist()
+            try:
+                data = pd.read_csv(cesta_souboru, names=sloupce, dtype=typy, delimiter=";")
+            except FileNotFoundError:
+                tk.messagebox.showwarning("ERROR", "Soubor s daty nenalezen")
+            except PermissionError:
+                tk.messagebox.showwarning("ERROR", "Přístup odepřen.")
+            else:
+                nalezeno = data[(data["Stanze"] == stanze_prepress)]
+                nalezeno.head()
+                stanzmesserliste_prepress = nalezeno.values.tolist()
+                
         koty1_zobraz = []
         koty2_zobraz = []
         for qq in stanzmesserliste_prepress:
