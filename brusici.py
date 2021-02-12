@@ -21,22 +21,23 @@ def vytvot_top_brusici(self):
         self.button_Konec.grid(row=3, column=0)
 
 def vytvor_sestavu(self, cesta_souboru, cesta_sestavy_Brusici):
-    seznamBrusici = []
-    try:
-        with open(cesta_souboru, "r", encoding="utf-8") as soubor:
-            soubor = csv.reader(soubor, delimiter=";")
-            for radka in soubor:
-                cast = radka[0:11] + radka[12:13]
-                seznamBrusici.append(cast)
-    except FileNotFoundError:
-        tk.messagebox.showwarning("Error", "Soubor, nebo cesta k souboru nenalezena.\n Nebo se jedná o prvotní použití programu.")
-        return
-    else:
-        with open(cesta_sestavy_Brusici, mode="w", encoding="ANSI") as brus:
-            for rad in seznamBrusici:
-                rad = str(rad)
-                rad = rad.replace("[", "").replace("]", "")
-                rad = rad.replace(",", ";").replace("'", "")
-                print(rad, file=brus)
-            tk.messagebox.showwarning("ERROR", "Sestava vytvořena")
-            return
+    while True:
+        seznamBrusici = []
+        try:
+            with open(cesta_souboru, "r", encoding="utf-8") as soubor:
+                soubor = csv.reader(soubor, delimiter=";")
+                for radka in soubor:
+                    cast = radka[0:11] + radka[12:13]
+                    seznamBrusici.append(cast)
+            with open(cesta_sestavy_Brusici, mode="w", encoding="ANSI") as brus:
+                for rad in seznamBrusici:
+                    rad = str(rad)
+                    rad = rad.replace("[", "").replace("]", "")
+                    rad = rad.replace(",", ";").replace("'", "")
+                    print(rad, file=brus)
+                tk.messagebox.showwarning("ERROR", "Sestava vytvořena")
+                return
+        except FileNotFoundError:
+            tk.messagebox.showwarning("Error", "Soubor s daty nenalezen.")
+        except PermissionError:
+            tk.messagebox.showwarning("Error", "Přístup odepřen.")
