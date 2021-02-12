@@ -1,4 +1,3 @@
-# import csv
 
 import tkinter as tk
 from tkinter import ttk, StringVar, NORMAL, CENTER, N, S, E, W
@@ -6,9 +5,6 @@ from tkinter import LEFT, NO, DISABLED, NORMAL
 import tkinter.messagebox
 import os
 import sys
-
-# import pandas as pd 
-# import numpy as np
 
 import novy_zaznam as nz
 import katalog as kat
@@ -22,16 +18,22 @@ class stanzmesserliste:
     def __init__(self):
         self.cesta_souboru = "seznam_nozu_test.csv"
         self.cesta_prava = "uzivatele.taj"
+        self.cestaPDF = "cestaPDFsoubory.txt"
         self.uzivatele_admin = []
-        self.pravda = None
+        # self.pravda = None
         self.pro_zobrazeni = []
         self.pozice_k_odeslani = []
-        self.cesta_pro_PDF = "U:/AV_Beku/Projekty/Stanzmesserliste/PDFStanzen/"
+        self.cesta_pro_PDF = stanzmesserliste.cesta_k_PDF(self, self.cestaPDF)
         self.cesta_sestavy_Brusici = "brusici.csv"
         self.nalezeno = []
         self.overeni(self.cesta_prava)
         self.odemceno = stanzmesserliste.odemknout(self)
 
+
+    def cesta_k_PDF(self, cestaPDF):
+        with open(cestaPDF, mode="r", encoding="utf-8") as cesta:
+            cesta = cesta.read()
+            return cesta
 
     def overeni(self, cesta_prava):
         with open(cesta_prava, mode="r", encoding="utf-8") as soubor:
