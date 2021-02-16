@@ -24,7 +24,7 @@ class stanzmesserliste:
         self.pro_zobrazeni = []
         self.pozice_k_odeslani = []
         self.cesta_pro_PDF = stanzmesserliste.cesta_k_PDF(self, self.cestaPDF)
-        self.cesta_sestavy_Brusici = "brusici.csv"
+        self.cesta_sestavy_Brusici = "C:/Brusici/brusici.csv"
         self.nalezeno = []
         self.overeni(self.cesta_prava)
         self.odemceno = stanzmesserliste.odemknout(self)
@@ -79,7 +79,7 @@ class stanzmesserlisteGUI(tk.Frame):
         self.prepress.grid(row=4, column=0)
         self.mezera3 = tk.Label()
         self.mezera3.grid(row=5, column=0)
-        self.brusici = tk.Button(root, text="pro brusírnu\n für Messerschärfer ", state=self.stanzmesserliste.odemceno, font="Arial 14", command=self.vytvot_top_brusici, width=self.entry_width)
+        self.brusici = tk.Button(root, text="pro brusírnu\n für Messerschärfer ", state=NORMAL, font="Arial 14", command=self.vytvot_top_brusici, width=self.entry_width)
         self.brusici.grid(row=6, column=0)
         self.mezera4 = tk.Label()
         self.mezera4.grid(row=7, column=0)
