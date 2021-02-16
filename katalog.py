@@ -313,6 +313,7 @@ def najdi_noze(self, cesta_souboru):
                 sirka.head()
 
                 if (SK1 == "") and (SK2 == ""):
+                        sirka = sirka.sort_values(by="L")
                         self.stanzmesserliste.nalezeno = sirka.values.tolist()
 
                         zobrazit = []
