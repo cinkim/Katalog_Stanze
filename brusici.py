@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, StringVar, NORMAL, CENTER, N, S, E, W
 from tkinter import LEFT, NO, DISABLED, NORMAL
 import tkinter.messagebox
+import os
 
 import csv
 
@@ -23,6 +24,12 @@ def vytvot_top_brusici(self):
 def vytvor_sestavu(self, cesta_souboru, cesta_sestavy_Brusici):
     while True:
         seznamBrusici = []
+
+        try:
+            os.mkdir("C:/Brusici")
+        except FileExistsError:
+            pass
+        
         try:
             with open(cesta_souboru, "r", encoding="utf-8") as soubor:
                 soubor = csv.reader(soubor, delimiter=";")
